@@ -1,0 +1,5 @@
+{
+  "name": "AI Architecture Explorer",
+  "description": "An interactive explorer for modern AI architectures like Transformers, Diffusion Models, Mixture ofExperts, Vision Transformers, RAG, GNNs, and RLHF. Features detailed explanations, diagrams, and Gemini-powered insights.",
+  "requestFramePermissions": []
+}
