@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { GoogleGenAI, Chat } from '@google/genai';
 import { GEMINI_API_KEY, GEMINI_CHAT_MODEL_NAME } from '../constants';
@@ -97,44 +96,32 @@ const GeminiInteraction: React.FC<GeminiInteractionProps> = ({ architectureName,
     }
   }, []); // Removed architectureName & initialPromptSuggestion from deps, they will be passed as args
 
-  // Effect for handling architecture changes (props.architectureName)
+  // Single effect to handle all chat initialization logic
   useEffect(() => {
-    // If the selected architecture in the app changes
+    // If architecture changed, clear the old chat state
     if (architectureName !== activeChatArchitectureRef.current) {
       console.log(`Architecture changed from ${activeChatArchitectureRef.current} to ${architectureName}. Resetting chat state.`);
-      // Clear all chat-related state for the old architecture before initializing for the new one.
       setChatInstance(null);
       setChatHistory([]);
-      setUserInput(''); // Also clear user input
+      setUserInput('');
       setError(null);
       setIsLoading(false); 
-      activeChatArchitectureRef.current = null; // Mark as no active chat for the old one
-
-      if (isOpen && !isLoading) { // Check !isLoading to prevent re-entry if init is somehow triggered rapidly
-        // If the panel is already open, initialize chat for the new architecture immediately
-        initializeChat(architectureName, initialPromptSuggestion);
-      }
+      activeChatArchitectureRef.current = null;
     }
-  }, [architectureName, initialPromptSuggestion, isOpen, initializeChat, isLoading]);
 
-  // Effect for initializing chat when panel opens IF NEEDED
-  useEffect(() => {
-    if (isOpen) {
-      // Initialize if:
-      // 1. No chat instance exists for the current architecture OR
-      // 2. The active chat instance is for a different architecture.
-      // 3. Or if there was an error for the current architecture and API key is now available.
-      if (!isLoading && (!chatInstance || architectureName !== activeChatArchitectureRef.current)) {
-         console.log(`Panel opened or architecture mismatch. Initializing for ${architectureName}. Has chatInstance: ${!!chatInstance}, activeArch: ${activeChatArchitectureRef.current}`);
-         initializeChat(architectureName, initialPromptSuggestion);
-      } else if (!isLoading && error && GEMINI_API_KEY && architectureName === activeChatArchitectureRef.current) {
-        // Case: API key was missing, now it's available, panel is open for the same arch, try re-init
-        console.log(`Panel opened with error for ${architectureName}, API key now available. Re-initializing.`);
+    // Initialize chat if panel is open and we need a new chat instance
+    if (isOpen && !isLoading) {
+      const needsInitialization = 
+        !chatInstance || // No chat instance exists
+        architectureName !== activeChatArchitectureRef.current || // Architecture mismatch
+        (error && GEMINI_API_KEY && architectureName === activeChatArchitectureRef.current); // Had error but now API key is available
+
+      if (needsInitialization) {
+        console.log(`Initializing chat for ${architectureName}. Reason: ${!chatInstance ? 'No chat instance' : architectureName !== activeChatArchitectureRef.current ? 'Architecture mismatch' : 'Recovering from error'}`);
         initializeChat(architectureName, initialPromptSuggestion);
       }
     }
   }, [isOpen, architectureName, initialPromptSuggestion, chatInstance, initializeChat, error, isLoading]);
-
 
   const handleToggleOpen = () => {
     setIsOpen(prevIsOpen => !prevIsOpen);
