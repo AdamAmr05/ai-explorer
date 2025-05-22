@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { DiagramBlock, Arrow, ConnectorLine } from '../DiagramCommon';
 
@@ -7,7 +6,7 @@ export const MoEDiagram: React.FC = () => {
     <div className="flex flex-col items-center space-y-4 p-4 bg-slate-900/50 rounded-lg text-xs">
       <DiagramBlock title="Input Token" color="green-700" />
       <Arrow direction="down" />
-      <DiagramBlock title="Gating Network" details="Selects Top-K Experts, Outputs Weights" color="green-600" />
+      <DiagramBlock title="Gating Network" color="green-700" />
       
       {/* Connecting Gating Network to Experts */}
       <div className="relative w-full h-8 my-2">
@@ -22,9 +21,9 @@ export const MoEDiagram: React.FC = () => {
       </div>
 
       <div className="flex justify-around w-full space-x-2">
-        <DiagramBlock title="Expert 1" details="e.g., FFN" color="green-500" />
-        <DiagramBlock title="Expert 2" details="e.g., FFN" color="green-500" />
-        <DiagramBlock title="...Expert N" details="e.g., FFN" color="green-500" />
+        <DiagramBlock title="Expert 1" color="green-700" />
+        <DiagramBlock title="Expert 2" color="green-700" />
+        <DiagramBlock title="Expert N" color="green-700" />
       </div>
 
       {/* Connecting Experts to Weighted Sum */}
